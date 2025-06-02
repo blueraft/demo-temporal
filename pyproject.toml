@@ -6,11 +6,15 @@ readme = "README.md"
 authors = [
     { name = "Ahmed Ilyas", email = "ahmed.n.ilyas@gmail.com" }
 ]
-requires-python = ">=3.13"
+requires-python = ">=3.12"
 dependencies = [
     "fastapi[standard]>=0.115.12",
     "temporalio>=1.12.0",
 ]
+ 
+[project.scripts]
+cpu-worker = "demo_temporal.cpu_worker:main"
+gpu-worker = "demo_temporal.gpu_worker:main"
 
 [build-system]
 requires = ["hatchling"]
