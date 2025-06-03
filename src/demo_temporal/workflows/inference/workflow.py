@@ -3,8 +3,8 @@ from datetime import timedelta
 from temporalio import workflow
 
 with workflow.unsafe.imports_passed_through():
-    from demo_temporal.inference_activities import run_inference
-    from demo_temporal.shared import InferenceInput
+    from demo_temporal.workflows.inference.activities import run_inference
+    from demo_temporal.workflows.shared import InferenceInput
 
 
 @workflow.defn

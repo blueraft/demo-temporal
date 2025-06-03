@@ -1,7 +1,7 @@
 import asyncio
 from temporalio import activity
 
-from demo_temporal.shared import PubChemTaskInput
+from demo_temporal.workflows.shared import PubChemTaskInput
 
 
 @activity.defn

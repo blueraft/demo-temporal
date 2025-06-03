@@ -13,8 +13,14 @@ dependencies = [
 ]
  
 [project.scripts]
-cpu-worker = "demo_temporal.cpu_worker:main"
-gpu-worker = "demo_temporal.gpu_worker:main"
+cpu-worker = "demo_temporal.workflows.cpu_worker:main"
+gpu-worker = "demo_temporal.workflows.gpu_worker:main"
+
+[project.optional-dependencies]
+workflow = [
+    "numpy>=2.2.6",
+    "requests>=2.32.3",
+]
 
 [build-system]
 requires = ["hatchling"]

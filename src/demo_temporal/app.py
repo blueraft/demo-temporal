@@ -1,12 +1,11 @@
 from contextlib import asynccontextmanager
-import uvicorn
 from fastapi import FastAPI, HTTPException
 from temporalio.client import Client
-from demo_temporal.inference_workflow import InferenceWorkflow
 import uuid
 
-from demo_temporal.pubchem_workflow import PubChemWorkflow
-from demo_temporal.shared import (
+from demo_temporal.workflows.inference.workflow import InferenceWorkflow
+from demo_temporal.workflows.pubchem.workflow import PubChemWorkflow
+from demo_temporal.workflows.shared import (
     CPU_TASK_QUEUE_NAME,
     GPU_TASK_QUEUE_NAME,
     InferenceInput,

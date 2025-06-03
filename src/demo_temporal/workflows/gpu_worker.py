@@ -3,9 +3,9 @@ import asyncio
 from temporalio.client import Client
 from temporalio.worker import Worker
 
-from demo_temporal.pubchem_activites import run_pubchem_query
-from demo_temporal.pubchem_workflow import PubChemWorkflow
-from demo_temporal.shared import CPU_TASK_QUEUE_NAME
+from demo_temporal.workflows.inference.activities import run_inference
+from demo_temporal.workflows.inference.workflow import InferenceWorkflow
+from demo_temporal.workflows.shared import GPU_TASK_QUEUE_NAME
 
 
 async def run_worker():
@@ -13,9 +13,9 @@ async def run_worker():
 
     worker = Worker(
         client,
-        task_queue=CPU_TASK_QUEUE_NAME,
-        workflows=[PubChemWorkflow],
-        activities=[run_pubchem_query],
+        task_queue=GPU_TASK_QUEUE_NAME,
+        workflows=[InferenceWorkflow],
+        activities=[run_inference],
     )
 
     await worker.run()
