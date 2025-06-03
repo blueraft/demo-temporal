@@ -5,9 +5,9 @@ from demo_temporal.workflows.shared import InferenceInput
 
 @activity.defn
 async def get_model(data: InferenceInput):
-    from .llm import get_model_async
+    from .llm import download_model
 
-    await get_model_async(data.model_path, data.model_url)
+    await download_model(data.model_path, data.model_url)
 
 
 @activity.defn
