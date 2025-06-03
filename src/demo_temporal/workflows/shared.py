@@ -4,8 +4,10 @@ from dataclasses import dataclass
 @dataclass
 class InferenceInput:
     attempts: int
-    model_name: str
-    file: str
+    model_path: str
+    model_url: str = None
+    input_file: str = None
+    input: str = None
 
 
 @dataclass
