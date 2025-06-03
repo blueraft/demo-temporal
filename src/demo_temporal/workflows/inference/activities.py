@@ -12,7 +12,7 @@ async def get_model(model_path: str, model_url: str = None) -> dict:
 @activity.defn
 async def construct_model_input(model_input: str, input_file: str) -> str:
     # also validates that the input is not empty
-    if not model_input:
+    if not model_input and input_file:
         with open(input_file, "r", encoding="utf-8") as f:
             model_input = f.read()
     if not model_input:
