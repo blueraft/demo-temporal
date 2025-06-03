@@ -11,16 +11,21 @@ dependencies = [
     "fastapi[standard]>=0.115.12",
     "temporalio>=1.12.0",
 ]
- 
+
 [project.scripts]
 cpu-worker = "demo_temporal.workflows.cpu_worker:main"
 gpu-worker = "demo_temporal.workflows.gpu_worker:main"
 
 [project.optional-dependencies]
 workflow = [
-    "numpy>=2.2.6",
-    "requests>=2.32.3",
+    "requests",
+    "aiohttp",
 ]
+dev = [
+    "pytest",
+    "pytest-asyncio",
+]
+
 
 [build-system]
 requires = ["hatchling"]
