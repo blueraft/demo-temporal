@@ -1,27 +1,28 @@
-from .llm import get_model_async
 from temporalio import activity
 
 from demo_temporal.workflows.shared import InferenceInput
 
 
 @activity.defn
-async def get_model(model_path: str, model_url: str = None) -> dict:
-    await get_model_async(model_path, model_url)
+async def get_model(data: InferenceInput):
+    from .llm import get_model_async
+
+    await get_model_async(data.model_path, data.model_url)
 
 
 @activity.defn
-async def construct_model_input(model_input: str, input_file: str) -> str:
+async def construct_model_input(data: InferenceInput) -> str:
     # also validates that the input is not empty
-    if not model_input and input_file:
-        with open(input_file, "r", encoding="utf-8") as f:
+    if not data.raw_input and data.input_file:
+        with open(data.input_file, "r", encoding="utf-8") as f:
             model_input = f.read()
-    if not model_input:
+            return model_input
+    if not data.raw_input:
         raise ValueError("Input data cannot be empty.")
-
-    return model_input
+    return data.raw_input
 
 
 @activity.defn
-async def run_inference(model_path, model_input) -> dict:
+async def run_inference(data: InferenceInput) -> dict:
     # load the model and run inference
-    pass
+    return {"result": data.raw_input}

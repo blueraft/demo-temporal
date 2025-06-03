@@ -5,9 +5,9 @@ from dataclasses import dataclass
 class InferenceInput:
     attempts: int
     model_path: str
-    model_url: str = None
-    input_file: str = None
-    input: str = None
+    model_url: str | None = None
+    input_file: str | None = None
+    raw_input: str | None = None
 
 
 @dataclass

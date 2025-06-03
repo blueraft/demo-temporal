@@ -6,7 +6,7 @@ import os
 BLOCK_SIZE = 1024
 
 
-async def get_model_async(model_path: str, model_url: str = None) -> dict:
+async def get_model_async(model_path: str, model_url: str | None = None) -> dict:
     # Check if file exists asynchronously
     exists = await asyncio.to_thread(os.path.exists, model_path)
     if not exists and not model_url:

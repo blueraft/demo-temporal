@@ -17,19 +17,16 @@ class InferenceWorkflow:
     async def run(self, data: InferenceInput) -> None:
         await workflow.execute_activity(
             get_model,
-            data.model_path,
-            data.model_url,
+            data,
             start_to_close_timeout=timedelta(seconds=120),
         )
-        model_input = await workflow.execute_activity(
+        data.raw_input = await workflow.execute_activity(
             construct_model_input,
-            data.input,
-            data.input_file,
+            data,
             start_to_close_timeout=timedelta(seconds=60),
         )
         await workflow.execute_activity(
             run_inference,
-            data.model_path,
-            model_input,
+            data,
             start_to_close_timeout=timedelta(seconds=120),
         )

@@ -3,6 +3,6 @@ curl -X POST http://localhost:8000/start-inference-task\
     -d '{"model_path": "models/crystallm_v1_small/ckpt.pt",
          "model_url": "https://zenodo.org/records/10642388/files/crystallm_v1_small.tar.gz",
          "input": "",
-         "input_file": "",
+         "input_file": "README.md",
          "attempts": "1"
          }'\
