@@ -115,3 +115,15 @@ async def evaluate_model(inference_input: InferenceInput) -> dict:
         "samples": generated,
     }
 
+
+async def write_cif_files(
+    inference_input: InferenceInput, generated: list[str]
+) -> None:
+    """
+    Write the generated CIFs to the specified target (console or file).
+    """
+    if inference_input.generate_cif:
+        for k, sample in enumerate(generated):
+            fname = f"sample_{k + 1}.cif"
+            with open(fname, "wt", encoding="utf-8") as f:
+                f.write(sample)

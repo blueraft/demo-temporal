@@ -22,7 +22,7 @@ class InferenceInput:
     - device: Device to run the model on (e.g., 'cpu', 'cuda', 'cuda:0').
     - dtype: Data type for the model (e.g., 'float32', 'bfloat16', 'float16').
     - compile: Whether to use PyTorch 2.0 to compile the model for faster inference.
-    - target: Where the generated content will be sent (e.g., 'console', 'file').
+    - generate_cif: If True, the model will generate CIF files.
     """
 
     attempts: int
@@ -38,7 +38,7 @@ class InferenceInput:
     device: str = "cpu"
     dtype: str = "bfloat16"
     compile: bool = False
-    target: str = "console"
+    generate_cif: bool = False
 
 
 @dataclass
