@@ -23,6 +23,7 @@ class InferenceInput:
     - dtype: Data type for the model (e.g., 'float32', 'bfloat16', 'float16').
     - compile: Whether to use PyTorch 2.0 to compile the model for faster inference.
     - generate_cif: If True, the model will generate CIF files.
+    - generated_samples: List to store generated samples from the model.
     """
 
     attempts: int
@@ -39,6 +40,7 @@ class InferenceInput:
     dtype: str = "bfloat16"
     compile: bool = False
     generate_cif: bool = False
+    generated_samples: list[str] | None = None
 
 
 @dataclass

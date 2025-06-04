@@ -49,23 +49,23 @@ async def download_model(model_path: str, model_url: str | None = None) -> dict:
     return {"model_path": model_path, "model_url": model_url}
 
 
-async def evaluate_model(inference_input: InferenceInput) -> dict:
+async def evaluate_model(inference_state: InferenceInput) -> dict:
     """
     Evaluate the model with the given parameters.
     Adapted from https://github.com/lantunes/CrystaLLM
     """
-    torch.manual_seed(inference_input.seed)
-    torch.cuda.manual_seed(inference_input.seed)
+    torch.manual_seed(inference_state.seed)
+    torch.cuda.manual_seed(inference_state.seed)
     torch.backends.cuda.matmul.allow_tf32 = True  # allow tf32 on matmul
     torch.backends.cudnn.allow_tf32 = True  # allow tf32 on cudnn
     device_type = (
-        "cuda" if "cuda" in inference_input.device else "cpu"
+        "cuda" if "cuda" in inference_state.device else "cpu"
     )  # for later use in torch.autocast
     ptdtype = {
         "float32": torch.float32,
         "bfloat16": torch.bfloat16,
         "float16": torch.float16,
-    }[inference_input.dtype]
+    }[inference_state.dtype]
     ctx = (
         nullcontext()
         if device_type == "cpu"
@@ -77,7 +77,7 @@ async def evaluate_model(inference_input: InferenceInput) -> dict:
     decode = tokenizer.decode
 
     checkpoint = torch.load(
-        inference_input.model_path, map_location=inference_input.device
+        inference_state.model_path, map_location=inference_state.device
     )
     gptconf = GPTConfig(**checkpoint["model_args"])
     model = GPT(gptconf)
@@ -89,14 +89,14 @@ async def evaluate_model(inference_input: InferenceInput) -> dict:
     model.load_state_dict(state_dict)
 
     model.eval()
-    model.to(inference_input.device)
-    if inference_input.compile:
+    model.to(inference_state.device)
+    if inference_state.compile:
         model = torch.compile(model)
 
     # encode the beginning of the prompt
-    prompt = inference_input.raw_input
+    prompt = inference_state.raw_input
     start_ids = encode(tokenizer.tokenize_cif(prompt))
-    x = torch.tensor(start_ids, dtype=torch.long, device=inference_input.device)[
+    x = torch.tensor(start_ids, dtype=torch.long, device=inference_state.device)[
         None, ...
     ]
 
@@ -104,20 +104,18 @@ async def evaluate_model(inference_input: InferenceInput) -> dict:
     generated = []
     with torch.no_grad():
         with ctx:
-            for k in range(inference_input.num_samples):
+            for k in range(inference_state.num_samples):
                 y = model.generate(
                     x,
-                    inference_input.max_new_tokens,
-                    temperature=inference_input.temperature,
-                    top_k=inference_input.top_k,
+                    inference_state.max_new_tokens,
+                    temperature=inference_state.temperature,
+                    top_k=inference_state.top_k,
                 )
                 generated.append(decode(y[0].tolist()))
 
-    return {
-        "prompt": prompt,
-        "num_samples_generated": inference_input.num_samples,
-        "samples": generated,
-    }
+    inference_state.generated_samples = generated
+
+    return inference_state
 
 
 async def write_cif_files(
