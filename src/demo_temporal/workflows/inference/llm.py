@@ -16,6 +16,10 @@ BLOCK_SIZE = 1024
 
 
 async def download_model(model_path: str, model_url: str | None = None) -> dict:
+    """
+    Checks if the model file exists locally, and if not, downloads it from the
+    provided URL.
+    """
     # Check if file exists asynchronously
     exists = await asyncio.to_thread(os.path.exists, model_path)
     if not exists and not model_url:
