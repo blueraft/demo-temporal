@@ -8,7 +8,7 @@ from demo_temporal.workflows.pubchem.workflow import PubChemWorkflow
 from demo_temporal.workflows.shared import (
     CPU_TASK_QUEUE_NAME,
     GPU_TASK_QUEUE_NAME,
-    InferenceInput,
+    InferenceUserInput,
     PubChemTaskInput,
 )
 
@@ -28,7 +28,7 @@ app = FastAPI(lifespan=lifespan)
 
 
 @app.post("/start-inference-task")
-async def start_inference_task(data: InferenceInput):
+async def start_inference_task(data: InferenceUserInput):
     workflow_id = f"inference-workflow-{uuid.uuid4()}"
     client = app.state.temporal_client
     try:

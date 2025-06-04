@@ -9,31 +9,38 @@ with workflow.unsafe.imports_passed_through():
         run_inference,
         write_results,
     )
-    from demo_temporal.workflows.shared import InferenceInput
+    from demo_temporal.workflows.shared import (
+        InferenceUserInput,
+        InferenceModelInput,
+        InferenceResultsInput,
+    )
 
 
 @workflow.defn
 class InferenceWorkflow:
     @workflow.run
-    async def run(self, data: InferenceInput) -> None:
-        await workflow.execute_activity(
-            get_model,
-            data,
-            start_to_close_timeout=timedelta(seconds=120),
-        )
-        data.raw_input = await workflow.execute_activity(
+    async def run(self, data: InferenceUserInput) -> list[str]:
+        raw_input = await workflow.execute_activity(
             construct_model_input,
             data,
             start_to_close_timeout=timedelta(seconds=60),
         )
-        data = await workflow.execute_activity(
+        model_data = InferenceModelInput(raw_input=raw_input)
+        await workflow.execute_activity(
+            get_model,
+            model_data,
+            start_to_close_timeout=timedelta(seconds=120),
+        )
+        generated_samples = await workflow.execute_activity(
             run_inference,
-            data,
+            model_data,
             start_to_close_timeout=timedelta(seconds=120),
         )
         await workflow.execute_activity(
             write_results,
-            data,
+            InferenceResultsInput(
+                generated_samples=generated_samples, generate_cif=data.generate_cif
+            ),
             start_to_close_timeout=timedelta(seconds=60),
         )
-        return data["generated_samples"]
+        return generated_samples
