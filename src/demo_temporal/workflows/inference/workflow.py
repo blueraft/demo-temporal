@@ -7,6 +7,7 @@ with workflow.unsafe.imports_passed_through():
         construct_model_input,
         get_model,
         run_inference,
+        write_results,
     )
     from demo_temporal.workflows.shared import InferenceInput
 
@@ -25,8 +26,13 @@ class InferenceWorkflow:
             data,
             start_to_close_timeout=timedelta(seconds=60),
         )
-        await workflow.execute_activity(
+        data = await workflow.execute_activity(
             run_inference,
             data,
             start_to_close_timeout=timedelta(seconds=120),
+        )
+        await workflow.execute_activity(
+            write_results,
+            data,
+            start_to_close_timeout=timedelta(seconds=60),
         )
