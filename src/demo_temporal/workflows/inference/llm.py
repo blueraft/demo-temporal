@@ -1,5 +1,7 @@
 from contextlib import nullcontext
 import os
+import shutil
+import tarfile
 
 import asyncio
 import aiohttp
@@ -40,11 +42,27 @@ async def download_model(model_path: str, model_url: str | None = None) -> dict:
             if response.status != 200:
                 raise ValueError(f'Failed to download model from "{model_url}".')
             # Download in chunks
-            os.makedirs(os.path.dirname(model_path), exist_ok=True)
+            zipfile = model_url.split("/")[-1]
             loop = asyncio.get_running_loop()
-            with open(model_path, "wb") as f:
+            with open(zipfile, "wb") as f:
                 async for chunk in response.content.iter_chunked(BLOCK_SIZE):
                     await loop.run_in_executor(None, f.write, chunk)
+    # Unpack the model zip
+    with tarfile.open(zipfile, "r:gz") as tar:
+        tar.extractall()
+    zipdir = zipfile.split(".")[0]
+    # Check if '.pt' file exists in the extracted directory
+    model_files = [f for f in os.listdir(zipdir) if f.endswith(".pt")]
+    if not model_files:
+        raise FileNotFoundError(
+            f'No ".pt" file found in the extracted directory "{os.path.dirname(model_path)}".'
+        )
+    # Move over the first .pt file found to the model_path
+    os.makedirs(os.path.dirname(model_path), exist_ok=True)
+    shutil.move(os.path.join(zipdir, model_files[0]), model_path)
+    # Remove zipfile and zipdir
+    os.remove(zipfile)
+    shutil.rmtree(zipdir)
 
     return {"model_path": model_path, "model_url": model_url}
 
