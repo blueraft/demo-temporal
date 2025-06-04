@@ -24,5 +24,16 @@ async def construct_model_input(data: InferenceInput) -> str:
 
 @activity.defn
 async def run_inference(data: InferenceInput) -> dict:
-    # load the model and run inference
-    return {"result": data.raw_input}
+    from .llm import evaluate_model
+
+    return await evaluate_model(data)
+
+
+@activity.defn
+async def write_results(data: InferenceInput) -> None:
+    """
+    Write the inference results to a file.
+    """
+    from .llm import write_cif_files
+
+    await write_cif_files(data)
