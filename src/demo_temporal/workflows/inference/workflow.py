@@ -36,3 +36,4 @@ class InferenceWorkflow:
             data,
             start_to_close_timeout=timedelta(seconds=60),
         )
+        return data["generated_samples"]
