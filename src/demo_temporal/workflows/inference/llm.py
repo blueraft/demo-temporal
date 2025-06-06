@@ -67,7 +67,7 @@ async def download_model(model_path: str, model_url: str | None = None) -> dict:
     return {"model_path": model_path, "model_url": model_url}
 
 
-def evaluate_model(inference_state: InferenceModelInput) -> list[str]:
+async def evaluate_model(inference_state: InferenceModelInput) -> list[str]:
     """
     Evaluate the model with the given parameters.
     Adapted from https://github.com/lantunes/CrystaLLM
@@ -130,7 +130,7 @@ def evaluate_model(inference_state: InferenceModelInput) -> list[str]:
     return generated
 
 
-def write_cif_files(result: InferenceResultsInput) -> None:
+async def write_cif_files(result: InferenceResultsInput) -> None:
     """
     Write the generated CIFs to the specified target (console or file).
     """
