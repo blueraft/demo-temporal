@@ -15,7 +15,7 @@ async def get_model(data: InferenceModelInput):
 
 
 @activity.defn
-async def construct_model_input(data: InferenceUserInput) -> str:
+def construct_model_input(data: InferenceUserInput) -> str:
     # also validates that the input is not empty
     if not data.raw_input and data.input_file:
         with open(data.input_file, "r", encoding="utf-8") as f:
@@ -27,17 +27,17 @@ async def construct_model_input(data: InferenceUserInput) -> str:
 
 
 @activity.defn
-async def run_inference(data: InferenceModelInput) -> list[str]:
+def run_inference(data: InferenceModelInput) -> list[str]:
     from .llm import evaluate_model
 
-    return await evaluate_model(data)
+    return evaluate_model(data)
 
 
 @activity.defn
-async def write_results(data: InferenceResultsInput) -> None:
+def write_results(data: InferenceResultsInput) -> None:
     """
     Write the inference results to a file.
     """
     from .llm import write_cif_files
 
-    await write_cif_files(data)
+    write_cif_files(data)
