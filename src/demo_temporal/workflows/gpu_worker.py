@@ -1,5 +1,6 @@
 import asyncio
 
+from concurrent.futures import ThreadPoolExecutor
 from temporalio.client import Client
 from temporalio.worker import Worker
 
@@ -16,14 +17,17 @@ from demo_temporal.workflows.shared import GPU_TASK_QUEUE_NAME
 async def run_worker():
     client = await Client.connect("localhost:7233", namespace="default")
 
-    worker = Worker(
-        client,
-        task_queue=GPU_TASK_QUEUE_NAME,
-        workflows=[InferenceWorkflow],
-        activities=[get_model, construct_model_input, run_inference, write_results],
-    )
+    with ThreadPoolExecutor(max_workers=8) as executor:
+        # Adjust the number of workers as needed
+        worker = Worker(
+            client,
+            task_queue=GPU_TASK_QUEUE_NAME,
+            activity_executor=executor,
+            workflows=[InferenceWorkflow],
+            activities=[get_model, construct_model_input, run_inference, write_results],
+        )
 
-    await worker.run()
+        await worker.run()
 
 
 def main():
